@@ -52,5 +52,8 @@ jobs:
             release \
               --auto-config \
               --project-version ${{ github.event.inputs.version }} \
-              --file=hello-${{ github.event.inputs.version }}.jar \
-              --file=com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
+              --project-snapshot-pattern .+-ea.*
+              --tag-name ${{ github.event.inputs.version }} \
+              --file Hello.java \
+              --file hello-${{ github.event.inputs.version }}.jar \
+              --file com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
