@@ -1,0 +1,27 @@
+name: 'Release Hello'
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (tag)'
+        default: '0-ea'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Print inputs'
+      run: echo "Release Hello ${{ github.event.inputs.version }}"
+    - name: 'Check out repository'
+      uses: actions/checkout@v2
+    - name: 'Set up JDK'
+      uses: actions/setup-java@v2
+      with:
+        java-version: 16
+        distribution: 'zulu'
+    - name: 'Smoke test without arguments'
+      run: java Hello.java
+    - name: 'Smoke test with arguments'
+      run: java Hello.java World 1 II ³
