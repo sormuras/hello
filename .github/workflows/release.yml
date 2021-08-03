@@ -49,8 +49,8 @@ jobs:
           JRELEASER_GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
         with:
           arguments: |
-            release
-            --auto-config
-            --project-version ${{ github.event.inputs.version }}
-            --file=hello-${{ github.event.inputs.version }}.jar
-            --file=com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
+            release \
+              --auto-config \
+              --project-version ${{ github.event.inputs.version }} \
+              --file=hello-${{ github.event.inputs.version }}.jar \
+              --file=com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
