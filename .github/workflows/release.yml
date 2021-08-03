@@ -43,3 +43,13 @@ jobs:
             LICENSE
             hello-${{ github.event.inputs.version }}.jar
             com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
+      - name: 'Release with JReleaser'
+        uses: jreleaser/release-action@v1
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+        with:
+          arguments: |
+            --auto-config
+            --project-version ${{ github.event.inputs.version }}
+            --file=hello-${{ github.event.inputs.version }}.jar
+            --file=com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
