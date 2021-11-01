@@ -1,0 +1,36 @@
+name: 'Build'
+description: 'Check out sources, set up JDK, and build binaries assets'
+runs:
+  using: composite
+  steps:
+    - name: 'Check out repository'
+      uses: actions/checkout@v2
+    - name: 'Set up JDK'
+      uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: 'zulu'
+    - name: 'Smoke test 1: java Hello.java without arguments'
+      run: java Hello.java
+    - name: 'Smoke test 2: java Hello.java with arguments'
+      run: java Hello.java World
+    - name: 'Compile and package executable JAR file'
+      run: |
+        javac --release 8 Hello.java
+        jar --verbose --create --file hello-${{ github.event.inputs.version }}.jar --main-class Hello Hello.class
+    - name: 'Smoke test 3: jar -jar hello-${{ github.event.inputs.version }}.jar with arguments'
+      run: java -jar hello-${{ github.event.inputs.version }}.jar World
+    - name: 'Compile and package module com.github.sormuras.hello'
+      run: |
+        javac --release 9 --module-source-path . --module com.github.sormuras.hello --module-version ${{ github.event.inputs.version }} -d modules
+        jar --verbose --create --file com.github.sormuras.hello@${{ github.event.inputs.version }}.jar -C modules/com.github.sormuras.hello .
+    - name: 'Smoke test 4: java --describe-module com.github.sormuras.hello'
+      run: java --module-path com.github.sormuras.hello@${{ github.event.inputs.version }}.jar --describe-module com.github.sormuras.hello
+    - name: 'Upload assets'
+      uses: actions/upload-artifact@v2
+      with:
+        name: release-${{ github.event.repository.name }}-${{ github.event.inputs.version }}
+        path: |
+          LICENSE
+          hello-${{ github.event.inputs.version }}.jar
+          com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
