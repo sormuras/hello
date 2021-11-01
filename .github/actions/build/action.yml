@@ -1,5 +1,12 @@
 name: 'Build'
-description: 'Check out sources, set up JDK, and build binaries assets'
+description: 'Set up JDK, build and upload artifact'
+
+inputs:
+  version:
+    description: 'Version information to use with this build'
+    default: '0-ea'
+    required: true
+
 runs:
   using: composite
   steps:
@@ -18,23 +25,23 @@ runs:
       shell: bash
       run: |
         javac --release 8 Hello.java
-        jar --verbose --create --file hello-${{ github.event.inputs.version }}.jar --main-class Hello Hello.class
-    - name: 'Smoke test 3: jar -jar hello-${{ github.event.inputs.version }}.jar with arguments'
+        jar --verbose --create --file hello-${{ inputs.version }}.jar --main-class Hello Hello.class
+    - name: 'Smoke test 3: jar -jar hello-${{ inputs.version }}.jar with arguments'
       shell: bash
-      run: java -jar hello-${{ github.event.inputs.version }}.jar World
+      run: java -jar hello-${{ inputs.version }}.jar World
     - name: 'Compile and package module com.github.sormuras.hello'
       shell: bash
       run: |
-        javac --release 9 --module-source-path . --module com.github.sormuras.hello --module-version ${{ github.event.inputs.version }} -d modules
-        jar --verbose --create --file com.github.sormuras.hello@${{ github.event.inputs.version }}.jar -C modules/com.github.sormuras.hello .
+        javac --release 9 --module-source-path . --module com.github.sormuras.hello --module-version ${{ inputs.version }} -d modules
+        jar --verbose --create --file com.github.sormuras.hello@${{ inputs.version }}.jar -C modules/com.github.sormuras.hello .
     - name: 'Smoke test 4: java --describe-module com.github.sormuras.hello'
       shell: bash
-      run: java --module-path com.github.sormuras.hello@${{ github.event.inputs.version }}.jar --describe-module com.github.sormuras.hello
-    - name: 'Upload assets'
+      run: java --module-path com.github.sormuras.hello@${{ inputs.version }}.jar --describe-module com.github.sormuras.hello
+    - name: 'Upload build artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: release-${{ github.event.repository.name }}-${{ github.event.inputs.version }}
+        name: build-${{ github.event.repository.name }}-${{ inputs.version }}
         path: |
           LICENSE
-          hello-${{ github.event.inputs.version }}.jar
-          com.github.sormuras.hello@${{ github.event.inputs.version }}.jar
+          hello-${{ inputs.version }}.jar
+          com.github.sormuras.hello@${{ inputs.version }}.jar
