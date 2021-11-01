@@ -9,20 +9,26 @@ runs:
         java-version: 17
         distribution: 'zulu'
     - name: 'Smoke test 1: java Hello.java without arguments'
+      shell: bash
       run: java Hello.java
     - name: 'Smoke test 2: java Hello.java with arguments'
+      shell: bash
       run: java Hello.java World
     - name: 'Compile and package executable JAR file'
+      shell: bash
       run: |
         javac --release 8 Hello.java
         jar --verbose --create --file hello-${{ github.event.inputs.version }}.jar --main-class Hello Hello.class
     - name: 'Smoke test 3: jar -jar hello-${{ github.event.inputs.version }}.jar with arguments'
+      shell: bash
       run: java -jar hello-${{ github.event.inputs.version }}.jar World
     - name: 'Compile and package module com.github.sormuras.hello'
+      shell: bash
       run: |
         javac --release 9 --module-source-path . --module com.github.sormuras.hello --module-version ${{ github.event.inputs.version }} -d modules
         jar --verbose --create --file com.github.sormuras.hello@${{ github.event.inputs.version }}.jar -C modules/com.github.sormuras.hello .
     - name: 'Smoke test 4: java --describe-module com.github.sormuras.hello'
+      shell: bash
       run: java --module-path com.github.sormuras.hello@${{ github.event.inputs.version }}.jar --describe-module com.github.sormuras.hello
     - name: 'Upload assets'
       uses: actions/upload-artifact@v2
