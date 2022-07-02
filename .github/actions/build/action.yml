@@ -35,7 +35,7 @@ runs:
       shell: bash
       run: java --module-path com.github.sormuras.hello@${{ inputs.version }}.jar --describe-module com.github.sormuras.hello
     - name: 'Upload build artifact'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: build-${{ github.event.repository.name }}-${{ inputs.version }}
         path: |

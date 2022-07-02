@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Check out repository'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Build'
         uses: ./.github/actions/build
         with:
           version: ${{ github.event.inputs.version }}
       - name: 'Release with JReleaser'
-        uses: jreleaser/release-action@v1
+        uses: jreleaser/release-action@v2
         env:
           JRELEASER_GITHUB_TOKEN: ${{ github.token }}
         with:
